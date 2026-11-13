@@ -74,12 +74,26 @@ impl SourceCodeParser {
         Ok(all_chunks)
     }
 
+    /// The folder challenge paths are shown relative to: the git repository
+    /// the files are in, or, for a plain folder of code, the folder all of
+    /// them share.
     fn find_git_root(files_to_process: &[(PathBuf, Box<dyn Language>)]) -> Result<PathBuf> {
         files_to_process
             .first()
             .map(|(first_file, _)| first_file)
             .and_then(|path| LocalGitRepositoryClient::new().get_repository_root(path))
-            .ok_or_else(|| GitTypeError::ExtractionFailed("Git repository not found".to_string()))
+            .or_else(|| Self::common_folder(files_to_process))
+            .ok_or_else(|| GitTypeError::ExtractionFailed("No source files found".to_string()))
+    }
+
+    fn common_folder(files: &[(PathBuf, Box<dyn Language>)]) -> Option<PathBuf> {
+        let mut common = files.first()?.0.parent()?.to_path_buf();
+        for (path, _) in &files[1..] {
+            while !path.starts_with(&common) {
+                common = common.parent()?.to_path_buf();
+            }
+        }
+        Some(common)
     }
 
     fn filter_and_sort_files(
