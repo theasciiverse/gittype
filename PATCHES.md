@@ -65,3 +65,5 @@ project of your own, gittype types that instead, as upstream.
 - The workflow now has a 60-minute limit per build job, caches the Rust
   build on macOS and Windows, and publishes the release whenever the Linux
   builds succeed, adding macOS and Windows when they build too.
+- macOS builds run on `macos-15-intel` (x86-64) and `macos-15` (ARM64):
+  jobs asking for `macos-14` were cancelled before any runner took them.
