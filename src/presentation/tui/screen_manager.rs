@@ -426,10 +426,16 @@ impl<B: ratatui::backend::Backend + Send + 'static> ScreenManagerImpl<B> {
     }
 
     fn clear_screen(&mut self) -> Result<()> {
-        // Clear the ratatui terminal buffer
-        self.ratatui_terminal.clear().map_err(|e| {
+        // Clear the screen and make the next draw repaint every cell.
+        // Terminal::clear() would do the same, but it first asks the
+        // terminal where the cursor is (to put it back afterwards), and on
+        // every change of screen that answer could arrive as stray input
+        // ("^[[24;65R" on the screen, or keys in a challenge).
+        self.ratatui_terminal.backend_mut().clear().map_err(|e| {
             GitTypeError::TerminalError(format!("Failed to clear ratatui terminal: {}", e))
         })?;
+        self.ratatui_terminal.current_buffer_mut().reset();
+        self.ratatui_terminal.swap_buffers();
         Ok(())
     }
 
