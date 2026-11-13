@@ -87,10 +87,9 @@ impl Database {
             Ok(current_dir.join("gittype-dev.db"))
         } else {
             // Release: use home directory
-            let home_dir = dirs::home_dir().ok_or_else(|| {
-                GitTypeError::ExtractionFailed("Could not determine home directory".to_string())
-            })?;
-            Ok(home_dir.join(".gittype").join("gittype.db"))
+            let dir = crate::infrastructure::storage::app_data_provider::release_data_dir()?;
+            std::fs::create_dir_all(&dir)?;
+            Ok(dir.join("gittype.db"))
         }
     }
 

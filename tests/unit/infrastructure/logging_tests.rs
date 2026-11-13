@@ -42,8 +42,13 @@ fn test_get_log_directory() {
         // In debug mode, should be project directory
         assert!(log_dir.ends_with("logs"));
     } else {
-        // In release mode, should be ~/.gittype/logs
-        assert!(log_dir.to_string_lossy().contains(".gittype"));
+        // In release mode, the logs folder in the data folder
+        assert_eq!(
+            log_dir,
+            gittype::infrastructure::storage::app_data_provider::release_data_dir()
+                .unwrap()
+                .join("logs")
+        );
     }
 }
 

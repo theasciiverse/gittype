@@ -77,10 +77,7 @@ pub fn get_log_directory() -> Result<PathBuf> {
         Ok(current_dir.join("logs"))
     } else {
         // Release: use home directory
-        let home_dir = dirs::home_dir().ok_or_else(|| {
-            GitTypeError::ExtractionFailed("Could not determine home directory".to_string())
-        })?;
-        Ok(home_dir.join(".gittype").join("logs"))
+        Ok(crate::infrastructure::storage::app_data_provider::release_data_dir()?.join("logs"))
     }
 }
 

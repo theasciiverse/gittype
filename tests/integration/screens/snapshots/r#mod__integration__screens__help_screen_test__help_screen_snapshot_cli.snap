@@ -28,10 +28,10 @@ expression: output
 │                                                                                                                      █
 │  Cache Locations:                                                                                                    █
 │                                                                                                                      █
-│  ~/.gittype/                      # Main cache directory                                                             █
-│  ~/.gittype/repos/                # Repository data cache                                                            █
-│  ~/.gittype/cache/                # Challenge cache                                                                  █
-│  ~/.gittype/gittype.db            # Session history database                                                         █
+│  ~/.local/state/gittype/             # Main cache directory                                                          █
+│  ~/.local/state/gittype/repos/       # Repository data cache                                                         █
+│  ~/.local/state/gittype/cache/       # Challenge cache                                                               █
+│  ~/.local/state/gittype/gittype.db   # Session history database                                                      █
 │                                                                                                                      █
 │  Examples:                                                                                                           █
 │                                                                                                                      █

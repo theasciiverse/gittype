@@ -52,7 +52,7 @@ fn custom_theme_file_to_theme_file_creates_correct_metadata() {
     assert_eq!(theme.name, "Custom");
     assert!(theme
         .description
-        .contains("edit ~/.gittype/custom-theme.json"));
+        .contains("/custom-theme.json to customize"));
 }
 
 #[test]

@@ -47,9 +47,8 @@ mod tests {
         };
 
         let path = client.get_local_repo_path(&repo_info).unwrap();
-        let expected = dirs::home_dir()
+        let expected = gittype::infrastructure::storage::app_data_provider::release_data_dir()
             .unwrap()
-            .join(".gittype")
             .join("repos")
             .join("github.com")
             .join("octocat")

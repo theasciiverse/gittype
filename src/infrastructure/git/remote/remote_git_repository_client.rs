@@ -29,15 +29,14 @@ impl RemoteGitRepositoryClient {
     }
 
     pub fn get_local_repo_path(&self, repo_info: &GitRepositoryRef) -> Result<PathBuf> {
-        dirs::home_dir()
-            .ok_or_else(|| {
+        crate::infrastructure::storage::app_data_provider::release_data_dir()
+            .map_err(|_| {
                 GitTypeError::InvalidRepositoryFormat(
                     "Could not determine home directory".to_string(),
                 )
             })
-            .map(|home_dir| {
-                home_dir
-                    .join(".gittype")
+            .map(|data_dir| {
+                data_dir
                     .join("repos")
                     .join(&repo_info.origin)
                     .join(&repo_info.owner)

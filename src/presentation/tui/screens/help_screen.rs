@@ -455,6 +455,7 @@ impl HelpScreen {
     }
 
     fn get_cli_content(colors: &Colors) -> Text<'static> {
+        let data_dir = crate::infrastructure::storage::app_data_provider::display_data_dir();
         Text::from(vec![
             Line::from(vec![Span::styled(
                 "Basic Usage:",
@@ -591,7 +592,7 @@ impl HelpScreen {
             Line::from(""),
             Line::from(vec![
                 Span::styled(
-                    format!("{:<33}", "~/.gittype/"),
+                    format!("{:<36}", format!("{}/", data_dir)),
                     Style::default().fg(colors.info()),
                 ),
                 Span::styled(
@@ -601,7 +602,7 @@ impl HelpScreen {
             ]),
             Line::from(vec![
                 Span::styled(
-                    format!("{:<33}", "~/.gittype/repos/"),
+                    format!("{:<36}", format!("{}/repos/", data_dir)),
                     Style::default().fg(colors.info()),
                 ),
                 Span::styled(
@@ -611,7 +612,7 @@ impl HelpScreen {
             ]),
             Line::from(vec![
                 Span::styled(
-                    format!("{:<33}", "~/.gittype/cache/"),
+                    format!("{:<36}", format!("{}/cache/", data_dir)),
                     Style::default().fg(colors.info()),
                 ),
                 Span::styled(
@@ -621,7 +622,7 @@ impl HelpScreen {
             ]),
             Line::from(vec![
                 Span::styled(
-                    format!("{:<33}", "~/.gittype/gittype.db"),
+                    format!("{:<36}", format!("{}/gittype.db", data_dir)),
                     Style::default().fg(colors.info()),
                 ),
                 Span::styled(

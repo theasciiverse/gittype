@@ -26,9 +26,10 @@ impl CustomThemeFile {
         ThemeFile {
             id: "custom".to_string(),
             name: "Custom".to_string(),
-            description:
-                "Your personal custom theme - edit ~/.gittype/custom-theme.json to customize"
-                    .to_string(),
+            description: format!(
+                "Your personal custom theme - edit {}/custom-theme.json to customize",
+                crate::infrastructure::storage::app_data_provider::display_data_dir()
+            ),
             dark: self.dark.clone(),
             light: self.light.clone(),
         }
