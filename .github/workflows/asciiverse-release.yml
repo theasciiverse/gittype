@@ -4,6 +4,9 @@
 # SHA256SUMS file, attached to a GitHub release (hub/catalog/SCHEMA.md,
 # release.source = "github").
 #
+# Rust is pinned to 1.93 (rust-toolchain.toml, and the Alpine image here):
+# 1.100.0 never finishes compiling the gittype crate.
+#
 # Tags look like v0.10.4-av.1. Linux builds run in Alpine, so the binaries
 # are static (musl; libgit2, OpenSSL and SQLite are vendored and built in).
 # Windows builds use MSVC on Windows runners. Every archive carries
@@ -40,6 +43,7 @@ jobs:
           - { target: x86_64-unknown-linux-musl, runner: ubuntu-24.04 }
           - { target: aarch64-unknown-linux-musl, runner: ubuntu-24.04-arm }
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,7 +51,7 @@ jobs:
 
       - name: Build
         run: |
-          docker run --rm -v "$PWD":/src -w /src -e GITTYPE_NO_UPDATE_CHECK rust:1-alpine sh -c '
+          docker run --rm -v "$PWD":/src -w /src -e GITTYPE_NO_UPDATE_CHECK rust:1.93-alpine sh -c '
             apk add --no-cache musl-dev perl make cmake g++ linux-headers &&
             cargo build --release --locked &&
             strip target/release/gittype'
@@ -73,12 +77,17 @@ jobs:
       matrix:
         target: [x86_64-apple-darwin, aarch64-apple-darwin]
     runs-on: macos-14
+    timeout-minutes: 60
     env:
       MACOSX_DEPLOYMENT_TARGET: "11.0"
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.TAG }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
 
       - name: Build
         run: |
@@ -104,10 +113,15 @@ jobs:
       matrix:
         target: [x86_64-pc-windows-msvc]
     runs-on: windows-2022
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.TAG }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
 
       - name: Build
         shell: bash
@@ -128,8 +142,12 @@ jobs:
           path: dist/*
 
   release:
+    # publish whatever built, as long as Linux did: a slow or failed macOS
+    # or Windows job must not hold the catalog's Linux builds back
     needs: [linux, macos, windows]
+    if: ${{ !cancelled() && needs.linux.result == 'success' }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/download-artifact@v4
         with:

@@ -53,3 +53,15 @@ project of your own, gittype types that instead, as upstream.
   `asciiverse/gittype.cast`, the 100x30 catalog preview: the program laid
   out as av installs it, and a driver that reads each challenge from the
   screen and types it at a human pace with the odd slip.
+
+## Build fix (v0.10.4-av.2)
+
+- **Rust pinned to 1.93** (`rust-toolchain.toml`, and `rust:1.93-alpine` in the
+  release workflow). Rust 1.100.0 (2026-11-09) never finishes compiling the
+  gittype crate: rustc sits at 100% CPU with little memory (reproduced in
+  Docker, stopped after 6 minutes), where 1.93.1 builds the whole static
+  binary in about 2 minutes. The first release run (v0.10.4-av.1) hung like
+  that for over three hours on Linux and Windows and was cancelled.
+- The workflow now has a 60-minute limit per build job, caches the Rust
+  build on macOS and Windows, and publishes the release whenever the Linux
+  builds succeed, adding macOS and Windows when they build too.

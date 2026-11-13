@@ -1,0 +1,5 @@
+# Pinned for the Asciiverse release builds: Rust 1.100.0 (2026-11-09)
+# spins without end compiling this crate (100% CPU, little memory), while
+# 1.93 builds it in seconds. Lift the pin once a newer release builds it.
+[toolchain]
+channel = "1.93.1"
