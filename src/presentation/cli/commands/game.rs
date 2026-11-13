@@ -44,8 +44,12 @@ pub fn run_game_session(cli: Cli) -> Result<()> {
     // Get ScreenManagerFactory from DI container
     let factory: &dyn ScreenManagerFactory = container.resolve_ref();
 
-    // Check for updates before starting the game session
-    let should_exit = {
+    // Check for updates before starting the game session, unless this
+    // build's updates come from elsewhere (a launcher or a package manager:
+    // built with GITTYPE_NO_UPDATE_CHECK set)
+    let should_exit = if option_env!("GITTYPE_NO_UPDATE_CHECK").is_some() {
+        Ok(false)
+    } else {
         let rt = tokio::runtime::Runtime::new().map_err(|e| {
             GitTypeError::TerminalError(format!("Failed to create tokio runtime: {}", e))
         })?;
